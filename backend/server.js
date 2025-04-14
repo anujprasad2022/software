@@ -1,18 +1,23 @@
 const express = require('express');
-const { Pool } = require('pg');
 const cors = require('cors');
+const pool = require('./config/database');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'bookstore',
-    password: 'qwer', // Change this to your postgres password
-    port: 5432,
-});
+// Test database connection before starting server
+const testConnection = async () => {
+    try {
+        const client = await pool.connect();
+        console.log('Database connection successful');
+        client.release();
+    } catch (err) {
+        console.error('Database connection error:', err);
+    }
+};
+
+testConnection();
 
 // User registration
 app.post('/register', async (req, res) => {
@@ -36,13 +41,15 @@ app.post('/login', async (req, res) => {
             'SELECT * FROM users WHERE username = $1 AND password = $2',
             [username, password]
         );
+        
         if (result.rows.length > 0) {
-            res.json({ success: true, userId: result.rows[0].id });
+            res.json({ success: true });
         } else {
-            res.status(401).json({ success: false, message: 'Invalid credentials' });
+            res.status(401).json({ success: false });
         }
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Login error:', err);
+        res.status(500).json({ error: 'Failed to process login' });
     }
 });
 
@@ -56,15 +63,10 @@ app.get('/books', async (req, res) => {
     }
 });
 
-// Add new endpoint for search
+// Search endpoint
 app.get('/books/search', async (req, res) => {
     try {
         const { query } = req.query;
-        if (!query) {
-            const result = await pool.query('SELECT * FROM books');
-            return res.json(result.rows);
-        }
-        
         const result = await pool.query(
             'SELECT * FROM books WHERE LOWER(title) LIKE LOWER($1) OR LOWER(author) LIKE LOWER($1)',
             [`%${query}%`]
@@ -76,8 +78,11 @@ app.get('/books/search', async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
-    console.log('Server running on port 3000');
-});
+// Only start the server if not in test mode
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(3000, () => {
+        console.log('Server running on port 3000');
+    });
+}
 
 module.exports = app;
