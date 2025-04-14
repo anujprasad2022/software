@@ -1,10 +1,10 @@
-const express = require('express');
-const cors = require('cors');
-const pool = require('./config/database');
+// const express = require('express');
+// const cors = require('cors');
+// const pool = require('./config/database');
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+// const app = express();
+// app.use(cors());
+// app.use(express.json());
 
 // Test database connection before starting server
 const testConnection = async () => {
