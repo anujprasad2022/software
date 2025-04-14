@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-container {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .search-bar {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 0.8rem 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .search-bar button {
+            width: auto;
+            padding: 0.8rem 1.5rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .search-bar button:hover {
+            background: #2980b9;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .book-price {
+            color: #2ecc71;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+
+        .cart {
+            position: fixed;
+            right: 2rem;
+            top: 2rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-total {
+            margin-top: 1rem;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .badge {
+            background: #e74c3c;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+        }
+
+        #cart-toggle {
+            position: fixed;
+            right: 2rem;
+            top: 2rem;
+            background: #3498db;
+            color: white;
+            padding: 1rem;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>Online Book Store</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="auth-section">
+            <div class="auth-container">
+                <div class="auth-box">
+                    <h2>Login</h2>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <input type="text" id="login-username" placeholder="Username" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="login-password" placeholder="Password" required>
+                        </div>
+                        <button type="submit">Login</button>
+                    </form>
+                </div>
+
+                <div class="auth-box">
+                    <h2>Register</h2>
+                    <form id="register-form">
+                        <div class="form-group">
+                            <input type="text" id="register-username" placeholder="Username" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="register-password" placeholder="Password" required>
+                        </div>
+                        <button type="submit">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="books-section" class="hidden">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search books by title or author...">
+                <button id="search-button">Search</button>
+            </div>
+
+            <div id="cart-toggle">🛒</div>
+            <div id="cart" class="cart hidden">
+                <h3>Shopping Cart</h3>
+                <div id="cart-items"></div>
+                <div class="cart-total">Total: $<span id="cart-total">0.00</span></div>
+                <button onclick="checkout()" style="margin-top: 1rem;">Checkout</button>
+            </div>
+
+            <div id="books-list" class="books-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+        let cart = [];
+
+        // Register function
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Registration successful! Please login.');
+                }
+            } catch (err) {
+                alert('Registration failed!');
+            }
+        });
+
+        // Login function
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('auth-section').classList.add('hidden');
+                    document.getElementById('books-section').classList.remove('hidden');
+                    loadBooks();
+                } else {
+                    alert('Login failed!');
+                }
+            } catch (err) {
+                alert('Login failed!');
+            }
+        });
+
+        // Search books function
+        async function searchBooks() {
+            const query = document.getElementById('search-input').value.trim();
+            if (!query) {
+                loadBooks(); // If search is empty, show all books
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/books/search?query=${encodeURIComponent(query)}`);
+                if (!response.ok) {
+                    throw new Error('Search failed');
+                }
+                const books = await response.json();
+                displayBooks(books);
+            } catch (err) {
+                console.error('Error searching books:', err);
+                alert('Failed to search books. Please try again.');
+            }
+        }
+
+        // Load and display books
+        async function loadBooks() {
+            try {
+                const response = await fetch(`${API_URL}/books`);
+                const books = await response.json();
+                displayBooks(books);
+            } catch (err) {
+                console.error('Error loading books:', err);
+            }
+        }
+
+        function displayBooks(books) {
+            const booksList = document.getElementById('books-list');
+            booksList.innerHTML = books.map(book => `
+                <div class="book-card">
+                    <img src="https://picsum.photos/200/300?random=${book.id}" alt="${book.title}">
+                    <h3>${book.title}</h3>
+                    <p>By ${book.author}</p>
+                    <div class="book-price">$${book.price}</div>
+                    <button onclick="addToCart(${JSON.stringify(book).replace(/"/g, '&quot;')})">
+                        Add to Cart
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Cart functions
+        function addToCart(book) {
+            const existingItem = cart.find(item => item.id === book.id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...book, quantity: 1 });
+            }
+            updateCart();
+        }
+
+        function removeFromCart(bookId) {
+            cart = cart.filter(item => item.id !== bookId);
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            cartItems.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div>
+                        ${item.title} x${item.quantity}
+                        <br>
+                        <small>$${(item.price * item.quantity).toFixed(2)}</small>
+                    </div>
+                    <button onclick="removeFromCart(${item.id})" style="width: auto;">❌</button>
+                </div>
+            `).join('');
+            
+            document.getElementById('cart-total').textContent = total.toFixed(2);
+        }
+
+        function checkout() {
+            alert('Thank you for your purchase! Total: $' + document.getElementById('cart-total').textContent);
+            cart = [];
+            updateCart();
+        }
+
+        // Toggle cart visibility
+        document.getElementById('cart-toggle').addEventListener('click', () => {
+            document.getElementById('cart').classList.toggle('hidden');
+        });
+
+        // Search on enter key
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchBooks();
+            }
+        });
+
+        // Add these event listeners after your existing event listeners:
+        document.getElementById('search-button').addEventListener('click', searchBooks);
+    </script>
+</body>
+</html>
